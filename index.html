@@ -22,10 +22,10 @@
         preload.on("error", handleFileError, this);
         stage = new createjs.Stage("playground");
 
-        plane = new createjs.Shape();
-        plane.graphics.beginFill("#000000").drawCircle(0, 0, 10);
-        plane.x = 320;
-        plane.y = 320;
+        plane = new createjs.Bitmap("assets/drone-50-41.png");
+        //plane.graphics.beginFill("#000000").drawCircle(0, 0, 10);
+        plane.x = width/2 - 25; // width/2 - planewidth/2
+        plane.y = height/2 - 20; // height/2 - planeheight/2
         stage.addChild(plane);
 
         createjs.Ticker.setFPS(fps);
