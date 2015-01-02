@@ -7,9 +7,13 @@
     var preload = null;
     var stage = null, map = null, plane = null;
 
-    var fps = 30;
-    var width = 640, height = 640;
-    var baseMapUri = "http://maps.googleapis.com/maps/api/staticmap?size=" + width + "x" + height;
+    var fps = 35;
+    var mapWidth = 640, mapHeight = 640;
+    var width = 605, height = 605;
+    var baseMapUri = "http://maps.googleapis.com/maps/api/staticmap?size=" + mapWidth + "x" + mapHeight;
+    var mapOffset = {
+        x:0, y:-35
+    };
 
     var lat = 48.16500, lon = 16.39496;
     var zoom = 16;
@@ -23,7 +27,6 @@
         stage = new createjs.Stage("playground");
 
         plane = new createjs.Bitmap("assets/drone-50-41.png");
-        //plane.graphics.beginFill("#000000").drawCircle(0, 0, 10);
         plane.x = width/2 - 25; // width/2 - planewidth/2
         plane.y = height/2 - 20; // height/2 - planeheight/2
         stage.addChild(plane);
@@ -38,9 +41,22 @@
             tick = 1;
             lat += 0.00050;
             var mapUri = baseMapUri + "&center=" + lat + "," + lon + "&zoom=" + zoom;
+            console.log(mapUri);
             preload.loadFile({id:"map", src:mapUri, type:createjs.AbstractLoader.IMAGE});
+        } 
+        if(map) {
+            map.y += 1;
+            var rect;
+            if(map.sourceRect) {
+                rect = new createjs.Rectangle(0, 0, width, map.sourceRect.height-1);
+                
+            } else {
+                rect = new createjs.Rectangle(0, 0, width, height);
+            }
+            map.sourceRect = rect;
             stage.update();
         }
+
     }
 
     function handleFileLoaded(event) {
@@ -50,6 +66,7 @@
                 stage.removeChild(map);
             }
             map = new createjs.Bitmap(event.result);
+            map.y = mapOffset.y;
             stage.addChildAt(map, stage.getChildIndex(plane));
         }
     }
