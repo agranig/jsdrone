@@ -38,14 +38,14 @@
             tick = 1;
             lat += 0.00050;
             var mapUri = baseMapUri + "&center=" + lat + "," + lon + "&zoom=" + zoom;
-            preload.loadFile({src:mapUri, type:createjs.AbstractLoader.IMAGE});
+            preload.loadFile({id:"map", src:mapUri, type:createjs.AbstractLoader.IMAGE});
             stage.update();
         }
     }
 
     function handleFileLoaded(event) {
         var item = event.item;
-        if(item.type == createjs.LoadQueue.IMAGE) {
+        if(item.id === "map" && item.type == createjs.LoadQueue.IMAGE) {
             if(map) {
                 stage.removeChild(map);
             }
