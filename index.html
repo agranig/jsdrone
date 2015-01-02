@@ -1,0 +1,69 @@
+<html>
+<head>
+    <script src="http://code.createjs.com/preloadjs-0.6.0.min.js"></script>
+    <script src="http://code.createjs.com/easeljs-0.8.0.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script>
+    var preload = null;
+    var stage = null, map = null, plane = null;
+
+    var fps = 30;
+    var width = 640, height = 640;
+    var baseMapUri = "http://maps.googleapis.com/maps/api/staticmap?size=" + width + "x" + height;
+
+    var lat = 48.16500, lon = 16.39496;
+    var zoom = 16;
+
+    var tick = 0;
+
+    function initPlayground() {
+        preload = new createjs.LoadQueue(true);
+        preload.on("fileload", handleFileLoaded, this);
+        preload.on("error", handleFileError, this);
+        stage = new createjs.Stage("playground");
+
+        plane = new createjs.Shape();
+        plane.graphics.beginFill("#000000").drawCircle(0, 0, 10);
+        plane.x = 320;
+        plane.y = 320;
+        stage.addChild(plane);
+
+        createjs.Ticker.setFPS(fps);
+        createjs.Ticker.addEventListener("tick", handleTick);
+    }
+
+    function handleTick() {
+        tick++;
+        if(tick % fps == 0) {
+            tick = 1;
+            lat += 0.00050;
+            var mapUri = baseMapUri + "&center=" + lat + "," + lon + "&zoom=" + zoom;
+            preload.loadFile({src:mapUri, type:createjs.AbstractLoader.IMAGE});
+            stage.update();
+        }
+    }
+
+    function handleFileLoaded(event) {
+        var item = event.item;
+        if(item.type == createjs.LoadQueue.IMAGE) {
+            if(map) {
+                stage.removeChild(map);
+            }
+            map = new createjs.Bitmap(event.result);
+            stage.addChildAt(map, stage.getChildIndex(plane));
+        }
+    }
+
+    function handleFileError(event) {
+        console.log("+++ file load error");
+    }
+
+    $( document ).ready(function() {
+        initPlayground();
+    });
+    </script>
+</head>
+<body>
+    <canvas id="playground" width="640" height="640"></canvas>
+</body>
+</html>
