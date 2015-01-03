@@ -42,13 +42,47 @@
 
         mask = new createjs.Shape();
         mask.graphics.beginFill("#ff0000").drawCircle(width/2, height/2, width/2+mapOffset.x);
-
-        compass = new createjs.Shape();
-        compass.graphics.beginStroke("#aaaaaa").drawCircle(width/2, height/2, width/2+mapOffset.x);
-        stage.addChild(compass);
+    
+        createCompass();
         
         createjs.Ticker.setFPS(fps);
         createjs.Ticker.addEventListener("tick", handleTick);
+    }
+
+    function createCompass() {
+        compass = new createjs.Container();
+        compass.regX = width/2;
+        compass.regY = height/2;
+        compass.rotation = 0;
+        compass.x = width/2;
+        compass.y = height/2;
+        stage.addChild(compass);
+
+        var tmp;
+        tmp = new createjs.Shape();
+        tmp.graphics.beginStroke("#aaaaaa").drawCircle(width/2, height/2, width/2+mapOffset.x);
+        compass.addChild(tmp);
+
+        tmp = new createjs.Text("N", "20px Arial", "#aaaaaa");
+        tmp.rotation = 0;
+        tmp.x = width/2;
+        tmp.y = 10;
+        compass.addChild(tmp);
+        tmp = new createjs.Text("E", "20px Arial", "#aaaaaa");
+        tmp.x = width - 10;
+        tmp.y = height/2;
+        tmp.rotation = 90;
+        compass.addChild(tmp);
+        tmp = new createjs.Text("S", "20px Arial", "#aaaaaa");
+        tmp.x = width/2;
+        tmp.y = height - 10;
+        tmp.rotation = 180;
+        compass.addChild(tmp);
+        tmp = new createjs.Text("W", "20px Arial", "#aaaaaa");
+        tmp.x = 10;
+        tmp.y = height/2;
+        tmp.rotation = 270;
+        compass.addChild(tmp);
     }
 
     function handleTick() {
@@ -111,6 +145,7 @@
         }
 
         map.rotation = (map.rotation % 360) + deg;
+        compass.rotation = (compass.rotation % 360) + deg;
     }
 
     $( document ).ready(function() {
