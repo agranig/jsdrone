@@ -4,6 +4,7 @@
     <script src="http://code.createjs.com/easeljs-0.8.0.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script>
+    var apiKey = "AIzaSyBH-AfB-WHo4xQYcWYVvp1ojh7jOCyQhbM";
 
     var key = {
         UP:    38,
@@ -13,12 +14,12 @@
         SPACE: 32
     };
     var preload = null;
-    var stage = null, map = null, plane = null;
+    var stage = null, map = null, plane = null, mask = null, compass = null;
 
     var fps = 35;
     var mapWidth = 640, mapHeight = 640;
     var width = 570, height = 570;
-    var baseMapUri = "http://maps.googleapis.com/maps/api/staticmap?size=" + mapWidth + "x" + mapHeight;
+    var baseMapUri = "http://maps.googleapis.com/maps/api/staticmap?key=" + apiKey + "&size=" + mapWidth + "x" + mapHeight;
     var mapOffset = {
         x:-35, y:-35
     };
@@ -39,32 +40,43 @@
         plane.y = height/2 - 20; // height/2 - planeheight/2
         stage.addChild(plane);
 
+        mask = new createjs.Shape();
+        mask.graphics.beginFill("#ff0000").drawCircle(width/2, height/2, width/2+mapOffset.x);
+
+        compass = new createjs.Shape();
+        compass.graphics.beginStroke("#aaaaaa").drawCircle(width/2, height/2, width/2+mapOffset.x);
+        stage.addChild(compass);
+        
         createjs.Ticker.setFPS(fps);
         createjs.Ticker.addEventListener("tick", handleTick);
     }
 
     function handleTick() {
         tick++;
-        //if(tick % fps == 0) {
-        if(tick == 1) {
+        if(tick % fps == 0) {
             tick = 1;
-            lat += 0.00050;
+            lon = Math.round(lon * 100000) / 100000;
+            lat = Math.round(lat * 100000) / 100000;
             var mapUri = baseMapUri + "&center=" + lat + "," + lon + "&zoom=" + zoom;
             console.log(mapUri);
             preload.loadFile({id:"map", src:mapUri, type:createjs.AbstractLoader.IMAGE});
         } 
         if(map) {
-        /*
             map.y += 1;
-            var rect;
-            if(map.sourceRect) {
-                rect = new createjs.Rectangle(0, 0, width, map.sourceRect.height-1);
-                
-            } else {
-                rect = new createjs.Rectangle(0, 0, width, height);
-            }
-            map.sourceRect = rect;
-        */
+
+            var deg = map.rotation;
+            var dx = Math.sin(deg/180*Math.PI) * -2;
+            var dy = Math.cos(deg/180*Math.PI);
+
+            // we move 35px per sec to y (one per tick), 
+            // which is 0.00050deg on zoom level 16
+            // TODO: calculate dynamically to allow zoom?
+            var mapFactorY = 0.000014285714285714285; // 0.00050/35
+            var mapFactorX = 0.00001075;
+
+            lon += (dx * mapFactorX);
+            lat += (dy * mapFactorY);
+
             stage.update();
         }
 
@@ -73,13 +85,16 @@
     function handleFileLoaded(event) {
         var item = event.item;
         if(item.id === "map" && item.type == createjs.LoadQueue.IMAGE) {
+            var oldRotation = 0;
             if(map) {
+                oldRotation = map.rotation;
                 stage.removeChild(map);
             }
             map = new createjs.Bitmap(event.result);
+            map.mask = mask;
             map.regX = mapWidth/2;
             map.regY = mapHeight/2;
-            map.rotation = 0;
+            map.rotation = oldRotation;
             map.x = mapWidth/2 + mapOffset.x;
             map.y = mapHeight/2 + mapOffset.y;
             stage.addChildAt(map, stage.getChildIndex(plane));
@@ -96,7 +111,6 @@
         }
 
         map.rotation = (map.rotation % 360) + deg;
-        console.log("current rotation is " + map.rotation);
     }
 
     $( document ).ready(function() {
@@ -105,25 +119,20 @@
         $(document).keydown(function(event) {
             switch(event.which) {
                 case key.UP:
-                    console.log("UP");
                     event.preventDefault();
                     break;
                 case key.DOWN:
-                    console.log("DOWN");
                     event.preventDefault();
                     break;
                 case key.LEFT:
-                    console.log("LEFT");
                     rotate(5);
                     event.preventDefault();
                     break;
                 case key.RIGHT:
-                    console.log("RIGHT");
                     rotate(-5);
                     event.preventDefault();
                     break;
                 case key.SPACE:
-                    console.log("SPACE");
                     event.preventDefault();
                     break;
             }
