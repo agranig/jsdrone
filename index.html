@@ -40,11 +40,13 @@
         plane.y = height/2 - 20; // height/2 - planeheight/2
         stage.addChild(plane);
 
+        createCompass();
+
         mask = new createjs.Shape();
         mask.graphics.beginFill("#ff0000").drawCircle(width/2, height/2, width/2+mapOffset.x);
     
-        createCompass();
-        
+
+        stage.update();
         createjs.Ticker.setFPS(fps);
         createjs.Ticker.addEventListener("tick", handleTick);
     }
@@ -83,6 +85,24 @@
         tmp.y = height/2;
         tmp.rotation = 270;
         compass.addChild(tmp);
+
+        var segments = 72;
+        for(var i = 0; i < segments; ++i) {
+            console.log("+++ adding segment " + i);
+            var offset = (i % 6 == 0) ? 20 : 30;
+            var angle = i*360/segments;
+            tmp = new createjs.Shape();
+            // TODO: doesn't work?
+            //tmp.graphics.moveTo(width/2, height/2).setStrokeStyle(1)
+            //    .beginStroke("#ff0000").lineTo(width/2, 0);
+            tmp.graphics.setStrokeStyle(1).beginStroke("#aaaaaa")
+                .rect(width/2, height/2, 0, height/2-offset);
+            tmp.regX = tmp.x = width/2;
+            tmp.regY = tmp.y = height/2;
+            tmp.rotation = angle;
+            compass.addChild(tmp);
+        }
+
     }
 
     function handleTick() {
