@@ -4,15 +4,23 @@
     <script src="http://code.createjs.com/easeljs-0.8.0.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script>
+
+    var key = {
+        UP:    38,
+        DOWN:  40,
+        LEFT:  37,
+        RIGHT: 39,
+        SPACE: 32
+    };
     var preload = null;
     var stage = null, map = null, plane = null;
 
     var fps = 35;
     var mapWidth = 640, mapHeight = 640;
-    var width = 605, height = 605;
+    var width = 570, height = 570;
     var baseMapUri = "http://maps.googleapis.com/maps/api/staticmap?size=" + mapWidth + "x" + mapHeight;
     var mapOffset = {
-        x:0, y:-35
+        x:-35, y:-35
     };
 
     var lat = 48.16500, lon = 16.39496;
@@ -37,7 +45,8 @@
 
     function handleTick() {
         tick++;
-        if(tick % fps == 0) {
+        //if(tick % fps == 0) {
+        if(tick == 1) {
             tick = 1;
             lat += 0.00050;
             var mapUri = baseMapUri + "&center=" + lat + "," + lon + "&zoom=" + zoom;
@@ -45,6 +54,7 @@
             preload.loadFile({id:"map", src:mapUri, type:createjs.AbstractLoader.IMAGE});
         } 
         if(map) {
+        /*
             map.y += 1;
             var rect;
             if(map.sourceRect) {
@@ -54,6 +64,7 @@
                 rect = new createjs.Rectangle(0, 0, width, height);
             }
             map.sourceRect = rect;
+        */
             stage.update();
         }
 
@@ -66,7 +77,11 @@
                 stage.removeChild(map);
             }
             map = new createjs.Bitmap(event.result);
-            map.y = mapOffset.y;
+            map.regX = mapWidth/2;
+            map.regY = mapHeight/2;
+            map.rotation = 0;
+            map.x = mapWidth/2 + mapOffset.x;
+            map.y = mapHeight/2 + mapOffset.y;
             stage.addChildAt(map, stage.getChildIndex(plane));
         }
     }
@@ -75,8 +90,44 @@
         console.log("+++ file load error");
     }
 
+    function rotate(deg) {
+        if(!map) {
+            return;
+        }
+
+        map.rotation = (map.rotation % 360) + deg;
+        console.log("current rotation is " + map.rotation);
+    }
+
     $( document ).ready(function() {
         initPlayground();
+
+        $(document).keydown(function(event) {
+            switch(event.which) {
+                case key.UP:
+                    console.log("UP");
+                    event.preventDefault();
+                    break;
+                case key.DOWN:
+                    console.log("DOWN");
+                    event.preventDefault();
+                    break;
+                case key.LEFT:
+                    console.log("LEFT");
+                    rotate(5);
+                    event.preventDefault();
+                    break;
+                case key.RIGHT:
+                    console.log("RIGHT");
+                    rotate(-5);
+                    event.preventDefault();
+                    break;
+                case key.SPACE:
+                    console.log("SPACE");
+                    event.preventDefault();
+                    break;
+            }
+        });
     });
     </script>
 </head>
