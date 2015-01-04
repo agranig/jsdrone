@@ -67,7 +67,7 @@ function handleMouseMove(event) {
     var dy = y - initPointerY;
     mouseMoved = true;
 
-    var tresh = 70;
+    var tresh = 40;
 
     if(dx > tresh) {
         rotate(5);
