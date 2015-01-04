@@ -24,6 +24,7 @@ var tick = 0;
 var zoom = 16;
 
 var lat = null, lon = null;
+var initPointerX, initPointerY, mouseMoved;
 
 function initPlayground() {
     preload = new createjs.LoadQueue(true);
@@ -53,18 +54,19 @@ function initPlayground() {
     createjs.Ticker.setFPS(fps);
 }
 
-function handleDown(event) {
+function handleMouseDown(event) {
     initPointerX = event.stageX;
     initPointerY = event.stageY;
+    mouseMoved = false;
 }
 
-function handleMove(event) {
+function handleMouseMove(event) {
     var x = event.stageX;
     var y = event.stageY;
     var dx = x - initPointerX;
     var dy = y - initPointerY;
+    mouseMoved = true;
 
-    console.log("dx=" + dx);
     var tresh = 70;
 
     if(dx > tresh) {
@@ -77,7 +79,13 @@ function handleMove(event) {
         initPointerY = event.stageY;
     }
     event.preventDefault();
+}
 
+function handleMouseClick(event) {
+    if(mouseMoved)
+        return;
+
+    console.log("+++ fire");
 }
 
 function createCompass() {
@@ -195,8 +203,9 @@ function handleFileLoaded(event) {
         map.rotation = oldRotation;
         map.x = mapWidth/2 + mapOffset.x;
         map.y = mapHeight/2 + mapOffset.y;
-        map.addEventListener("mousedown", handleDown);
-        map.addEventListener("pressmove", handleMove);
+        map.addEventListener("mousedown", handleMouseDown);
+        map.addEventListener("pressmove", handleMouseMove);
+        map.addEventListener("click", handleMouseClick);
         stage.addChildAt(map, stage.getChildIndex(plane));
     }
 }
