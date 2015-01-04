@@ -8,6 +8,7 @@ var key = {
     RIGHT: 39,
     SPACE: 32
 };
+var pause = false;
 var preload = null;
 var stage = null, map = null, plane = null, mask = null, compass = null;
 
@@ -232,5 +233,14 @@ $(document).ready(function() {
                 event.preventDefault();
                 break;
         }
+    });
+
+    $("#pause").click(function() {
+        if(pause) {
+            createjs.Ticker.addEventListener("tick", handleTick);
+        } else {
+            createjs.Ticker.removeEventListener("tick", handleTick);
+        }
+        pause = !pause;
     });
 });
