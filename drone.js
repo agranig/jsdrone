@@ -30,6 +30,7 @@ function initPlayground() {
     preload.on("fileload", handleFileLoaded, this);
     preload.on("error", handleFileError, this);
     stage = new createjs.Stage("playground");
+    createjs.Touch.enable(stage);
 
     plane = new createjs.Bitmap("assets/drone-50-41.png");
     plane.x = width/2 - 25; // width/2 - planewidth/2
@@ -50,7 +51,33 @@ function initPlayground() {
 
     stage.update();
     createjs.Ticker.setFPS(fps);
-    //createjs.Ticker.addEventListener("tick", handleTick);
+}
+
+function handleDown(event) {
+    initPointerX = event.stageX;
+    initPointerY = event.stageY;
+}
+
+function handleMove(event) {
+    var x = event.stageX;
+    var y = event.stageY;
+    var dx = x - initPointerX;
+    var dy = y - initPointerY;
+
+    console.log("dx=" + dx);
+    var tresh = 70;
+
+    if(dx > tresh) {
+        rotate(5);
+        initPointerX = event.stageX;
+        initPointerY = event.stageY;
+    } else if(dx < tresh*-1) {
+        rotate(-5);
+        initPointerX = event.stageX;
+        initPointerY = event.stageY;
+    }
+    event.preventDefault();
+
 }
 
 function createCompass() {
@@ -168,6 +195,8 @@ function handleFileLoaded(event) {
         map.rotation = oldRotation;
         map.x = mapWidth/2 + mapOffset.x;
         map.y = mapHeight/2 + mapOffset.y;
+        map.addEventListener("mousedown", handleDown);
+        map.addEventListener("pressmove", handleMove);
         stage.addChildAt(map, stage.getChildIndex(plane));
     }
 }
