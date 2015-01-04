@@ -19,6 +19,7 @@ var baseMapUri = "//maps.googleapis.com/maps/api/staticmap?key=" + apiKey + "&si
 var mapOffset = {
     x:-35, y:-35
 };
+var mapType = ""; // roadmap by default
 
 var tick = 0;
 var zoom = 16;
@@ -163,7 +164,7 @@ function handleTick() {
         tick = 1;
         lon = Math.round(lon * 100000) / 100000;
         lat = Math.round(lat * 100000) / 100000;
-        var mapUri = baseMapUri + "&center=" + lat + "," + lon + "&zoom=" + zoom;
+        var mapUri = baseMapUri + "&center=" + lat + "," + lon + "&zoom=" + zoom + mapType;
         //console.log(mapUri);
         preload.loadFile({id:"map", src:mapUri, type:createjs.AbstractLoader.IMAGE});
     } 
@@ -273,12 +274,25 @@ $(document).ready(function() {
         }
     });
 
-    $("#pause").click(function() {
+    $("#btnPause").click(function() {
         if(pause) {
             createjs.Ticker.addEventListener("tick", handleTick);
+            $(this).text("Pause");
         } else {
             createjs.Ticker.removeEventListener("tick", handleTick);
+            $(this).text("Resume");
         }
         pause = !pause;
+        console.log("pause=" + pause);
+    });
+
+    $("#btnSatellite").click(function() {
+        if(mapType.length) {
+            mapType = "";
+            $(this).text("Satellite");
+        } else {
+            mapType = "&maptype=hybrid";
+            $(this).text("Map");
+        }
     });
 });
