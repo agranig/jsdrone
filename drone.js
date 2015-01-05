@@ -11,6 +11,7 @@ var key = {
 var pause = false;
 var preload = null;
 var stage = null, map = null, plane = null, mask = null, compass = null;
+var fuelDisplay = null, fuelAmount = null, fuelHeight = 200;
 
 var fps = 35;
 var mapWidth = 640, mapHeight = 640;
@@ -23,6 +24,9 @@ var mapType = ""; // roadmap by default
 
 var tick = 0;
 var zoom = 16;
+
+var maxFuel = fps * 10;
+var fuel = maxFuel;
 
 var lat = null, lon = null;
 var initPointerX, initPointerY, mouseMoved;
@@ -50,6 +54,16 @@ function initPlayground() {
     mask = new createjs.Shape();
     mask.graphics.beginFill("#ff0000").drawCircle(width/2, height/2, width/2+mapOffset.x);
 
+    fuelDisplay = new createjs.Container();
+    fuelDisplay.x = width;
+    fuelDisplay.y = height/2-100;
+    stage.addChild(fuelDisplay);
+    tmp = new createjs.Shape();
+    tmp.graphics.beginStroke("#aaaaaa").rect(0, 0, 25, fuelHeight+2);
+    fuelDisplay.addChild(tmp);
+    fuelAmount = new createjs.Shape();
+    fuelAmount.graphics.beginLinearGradientFill(["#00ff00", "#ffff00", "#ff0000"], [0, 0.75, 1], 0, 0, 0, 200).rect(1, 1, 23, fuelHeight); 
+    fuelDisplay.addChild(fuelAmount);
 
     stage.update();
     createjs.Ticker.setFPS(fps);
@@ -184,8 +198,15 @@ function handleTick() {
         lon += (dx * mapFactorX);
         lat += (dy * mapFactorY);
 
-        stage.update();
+        fuel--;
+        var tmp = new createjs.Shape();
+        var y = Math.round(fuelHeight - fuelHeight/maxFuel*fuel);
+        tmp.graphics.beginFill("#ff0000").rect(0, y, 24, fuelHeight);
+        fuelAmount.mask = tmp;
+
     }
+
+    stage.update();
 
 }
 
