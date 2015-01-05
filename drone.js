@@ -204,6 +204,17 @@ function handleTick() {
         tmp.graphics.beginFill("#ff0000").rect(0, y, 24, fuelHeight);
         fuelAmount.mask = tmp;
 
+        /*
+        // TODO: add to array of items in a separate container,
+        // and on each tick move all items, then rotate and display
+
+        tmp = new createjs.Bitmap("assets/fuelcan-20-20.png");
+        tmp.x = width/2 - 10; // width/2 - planewidth/2
+        tmp.y = 50; // height/2 - planeheight/2
+        stage.addChild(tmp);
+        */
+
+
     }
 
     stage.update();
