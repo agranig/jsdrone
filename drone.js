@@ -241,7 +241,7 @@ function handleFileLoaded(event) {
 }
 
 function handleFileError(event) {
-    console.log("+++ file load error");
+    console.log("+++ file load error", event);
 }
 
 function rotate(deg) {
