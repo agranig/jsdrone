@@ -1,5 +1,4 @@
 *.swp
 *~
 *.bak
-drone-min.js
-drone.html
+*.pem
