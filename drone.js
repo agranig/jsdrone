@@ -1,6 +1,3 @@
-var apiKey = "AIzaSyBH-AfB-WHo4xQYcWYVvp1ojh7jOCyQhbM";
-var defaultLon = 13.3833, defaultLat = 52.5167;
-
 var key = {
     UP:    38,
     DOWN:  40,

@@ -1,0 +1,2 @@
+var apiKey = "YOUR-GOOGLE-MAPS-API-KEY";
+var defaultLon = 10.3833, defaultLat = 52.5167;
