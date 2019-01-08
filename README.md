@@ -1,6 +1,4 @@
-= JSDrone
-
-== About
+# JSDrone
 
 JSDrone is a tiny and simple JS implementation of a game to explore your area
 via Google Maps using a drone in top-down view.
@@ -13,7 +11,7 @@ The idea was to create a full game out of it, requiting you to pick up fuel crat
 why there is a preliminary fuel indication in the current implementation). I abandoned any work on
 this though due to having lost interest.
 
-== Install
+## Install
 
 Copy config.js.example to config.js and put your Google Maps Static API Key there. There is no support for
 signed URLs, so make sure to disable URL signing in the Google Cloud Platform console for this API.
